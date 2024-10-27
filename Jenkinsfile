@@ -2,13 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "my-css-website" // Local Docker image name
+        DOCKER_IMAGE = "my-css-website"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Check out code from source control
                 checkout scm
             }
         }
@@ -16,8 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image with the Jenkins build number
-                    sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
+                    bat "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
                 }
             }
         }
@@ -25,10 +23,9 @@ pipeline {
         stage('Deploy Locally') {
             steps {
                 script {
-                    // Stop and remove the existing container if running, then deploy the new image
-                    sh """
-                    docker stop my-css-website || true
-                    docker rm my-css-website || true
+                    bat """
+                    docker stop my-css-website || exit 0
+                    docker rm my-css-website || exit 0
                     docker run -d -p 80:80 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
                     """
                 }
@@ -38,7 +35,7 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Clean up workspace
+            cleanWs()
         }
         success {
             echo 'Docker image built and deployed successfully!'
