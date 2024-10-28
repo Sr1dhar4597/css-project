@@ -37,10 +37,10 @@ pipeline {
     }
     post {
         always {
-            // Optional: You can include cleanup here if needed later.
-            // For now, we are keeping the container running.
-            // sh 'docker rm -f my-css-website || true'
+            // Ensure that the always block has a step, such as logging a message
+            echo 'Pipeline finished. The Docker container is running on port 8080.'
         }
     }
 }
+
 
