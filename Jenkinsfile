@@ -26,7 +26,7 @@ pipeline {
                     bat """
                     docker stop my-css-website || exit 0
                     docker rm my-css-website || exit 0
-                    docker run -d -p 81:81 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                    docker run -d -p 8081:81 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
                     """
                 }
             }
