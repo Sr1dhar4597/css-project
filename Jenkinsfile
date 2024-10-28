@@ -21,17 +21,16 @@ pipeline {
         }
 
         stage('Deploy Locally') {
-            steps {
-                script {
-                    bat """
-                    docker stop my-css-website || exit 0
-                    docker rm my-css-website || exit 0
-                    docker run -d -p 8081:81 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
-                    """
-                }
-            }
+    steps {
+        script {
+            bat """
+            docker stop my-css-website || exit 0
+            docker rm my-css-website || exit 0
+            docker run -d -p 8081:80 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+            """
         }
     }
+}
 
     post {
         always {
