@@ -1,47 +1,45 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "my-css-website"
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Checkout the code from the Git repository
+                git 'https://github.com/Sr1dhar4597/css-project.git'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
+                    // Build the Docker image
+                    def image = docker.build("my-css-website:latest")
                 }
             }
         }
-
-        stage('Deploy Locally') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    bat """
-                    docker stop my-css-website || exit 0
-                    docker rm my-css-website || exit 0
-                    docker run -d -p 8081:80 --name my-css-website ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
-                    """
+                    // Remove any existing container with the same name
+                    sh 'docker rm -f my-css-website || true'
+
+                    // Run the Docker container in detached mode
+                    sh 'docker run -d -p 8080:80 --name my-css-website my-css-website:latest'
                 }
+            }
+        }
+        stage('Verify') {
+            steps {
+                // Check if the container is running and log the status
+                sh 'docker ps'
+                sh 'docker logs my-css-website'
             }
         }
     }
-
     post {
         always {
-            cleanWs()
-        }
-        success {
-            echo 'Docker image built and deployed successfully!'
-        }
-        failure {
-            echo 'Failed to build or deploy the Docker image.'
+            // Optional: You can include cleanup here if needed later.
+            // For now, we are keeping the container running.
+            // sh 'docker rm -f my-css-website || true'
         }
     }
 }
