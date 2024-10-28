@@ -11,14 +11,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Log the current working directory for troubleshooting
-                    sh 'pwd'
-                    // Log the contents of the workspace
-                    sh 'ls -la'
-
-                    // Build the Docker image
                     echo 'Building Docker image...'
-                    def image = docker.build("my-css-website:latest")
+                    // Ensure the correct directory is set before building
+                    dir('path/to/your/dockerfile') { // Change this to the path where your Dockerfile is located
+                        // Build the Docker image
+                        def image = docker.build("my-css-website:latest")
+                    }
                 }
             }
         }
